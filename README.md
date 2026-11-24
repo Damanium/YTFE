@@ -206,7 +206,14 @@ Genera una carpeta que no requiere tener .NET instalado. Aún no se ha probado e
 
 ---
 
+## Licencia
+
+YTFE se distribuye bajo la **licencia MIT** (ver [LICENSE](LICENSE)): puedes usarlo, copiarlo, modificarlo y
+redistribuirlo, también con fines comerciales, conservando el aviso de copyright. Se ofrece "tal cual", sin garantía.
+
 ## Licencias y componentes de terceros
+
+Lo siguiente **no** está cubierto por la licencia MIT de YTFE; cada componente mantiene la suya.
 
 | Componente | Origen | Licencia |
 |---|---|---|
