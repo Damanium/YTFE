@@ -1,0 +1,143 @@
+name: Release
+
+# Compila YTFE en un Windows limpio y publica una release con el ZIP descargable.
+#
+# Cómo publicar una versión:
+#     git tag v1.1.0
+#     git push origin v1.1.0
+#
+# También se puede lanzar a mano desde la pestaña Actions ("Run workflow"): compila y deja el ZIP
+# como artefacto de la ejecución, pero NO crea ninguna release.
+#
+# Firma de código (opcional, desactivada por defecto):
+#     Cuando SignPath Foundation apruebe el proyecto, ver "Firma de código" en el README y activar la
+#     variable de repositorio SIGNPATH_ENABLED=true. Mientras no exista, la release sale sin firmar y
+#     las notas de la release lo avisan.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write      # crear la release y subir los ficheros
+  id-token: write      # atestación de procedencia (la firma la emite GitHub)
+  attestations: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    env:
+      SIGNED: ${{ vars.SIGNPATH_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Calcular versión
+        id: ver
+        shell: pwsh
+        run: |
+          if ('${{ github.ref_type }}' -eq 'tag') { $v = '${{ github.ref_name }}'.TrimStart('v') } else { $v = '0.0.0-dev' }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          "name=YTFE-$v-win-x64" >> $env:GITHUB_OUTPUT
+
+      - name: Publicar (un solo exe, con .NET incluido)
+        run: >
+          dotnet publish src/YTFE -c Release -r win-x64 --self-contained
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true
+          -p:Version=${{ steps.ver.outputs.version }}
+          -o publish/win-x64
+
+      # ---- Firma de código con SignPath (solo si SIGNPATH_ENABLED=true) ----------------------------
+      # Requisitos: ver README. En SignPath, la configuración del artefacto debe esperar un ZIP que
+      # contenga YTFE.exe en la raíz.
+      - name: Subir exe sin firmar
+        if: env.SIGNED == 'true'
+        id: unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: ytfe-unsigned
+          path: publish/win-x64/YTFE.exe
+
+      - name: Firmar con SignPath
+        if: env.SIGNED == 'true'
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: publish/signed
+
+      - name: Usar el exe firmado
+        if: env.SIGNED == 'true'
+        shell: pwsh
+        run: Copy-Item publish/signed/YTFE.exe publish/win-x64/YTFE.exe -Force
+      # ----------------------------------------------------------------------------------------------
+
+      - name: Empaquetar y calcular SHA-256
+        id: pack
+        shell: pwsh
+        run: |
+          $d = '${{ steps.ver.outputs.name }}'
+          New-Item -ItemType Directory $d | Out-Null
+          Copy-Item publish/win-x64/YTFE.exe, LICENSE, README.md $d
+          Compress-Archive -Path $d -DestinationPath "$d.zip"
+          $h = (Get-FileHash "$d.zip" -Algorithm SHA256).Hash.ToLower()
+          "$h  $d.zip" | Set-Content SHA256SUMS.txt -Encoding ascii
+          "sha=$h" >> $env:GITHUB_OUTPUT
+
+      - name: Atestación de procedencia (demuestra que el ZIP sale de este código)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ${{ steps.ver.outputs.name }}.zip
+
+      - name: Guardar como artefacto de la ejecución
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.ver.outputs.name }}
+          path: |
+            ${{ steps.ver.outputs.name }}.zip
+            SHA256SUMS.txt
+
+      - name: Crear la release
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $name = '${{ steps.ver.outputs.name }}'
+          $notes = @()
+          $notes += "## Descarga"
+          $notes += "1. Descarga ``$name.zip``."
+          $notes += "2. Descomprímelo y ejecuta ``YTFE.exe``. No necesitas instalar .NET."
+          $notes += ""
+          if ($env:SIGNED -eq 'true') {
+            $notes += "Esta versión está **firmada digitalmente** (firma de código gratuita de SignPath Foundation)."
+          } else {
+            $notes += "> **Esta versión no está firmada digitalmente.** Windows puede mostrar avisos:"
+            $notes += "> - **SmartScreen** (""Windows protegió su PC""): pulsa *Más información → Ejecutar de todas formas*."
+            $notes += "> - **Smart App Control** o una política de empresa: no se puede saltar desde el aviso. Mira la sección *Si Windows bloquea la aplicación* del README."
+          }
+          $notes += ""
+          $notes += "SHA-256 de ``$name.zip``:"
+          $notes += ""
+          $notes += '```'
+          $notes += '${{ steps.pack.outputs.sha }}'
+          $notes += '```'
+          $notes += ""
+          $notes += "> **Uso responsable.** Descarga solo contenido que tengas derecho a descargar y respeta las condiciones de uso de cada sitio."
+          Set-Content release-notes.md $notes -Encoding utf8
+
+          $ghArgs = @('release', 'create', '${{ github.ref_name }}', "$name.zip", 'SHA256SUMS.txt',
+                    '--title', "YTFE ${{ steps.ver.outputs.version }}",
+                    '--notes-file', 'release-notes.md', '--generate-notes')
+          if ('${{ steps.ver.outputs.version }}' -like '*-*') { $ghArgs += '--prerelease' }
+          gh @ghArgs

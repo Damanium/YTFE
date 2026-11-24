@@ -36,15 +36,57 @@ Por debajo usa [yt-dlp](https://github.com/yt-dlp/yt-dlp) (que admite YouTube y 
 
 No hace falta instalar Python, yt-dlp, ffmpeg ni deno: la aplicación los descarga sola la primera vez.
 
+## Descargar e instalar
+
+1. Ve a [**Releases**](https://github.com/Damanium/YTFE/releases/latest) y descarga `YTFE-<versión>-win-x64.zip`.
+2. *(Recomendado)* Antes de descomprimir: clic derecho en el ZIP → **Propiedades** → marca **Desbloquear** → Aceptar.
+3. Descomprime y ejecuta `YTFE.exe`. No hace falta instalar .NET: el ejecutable lo lleva incluido.
+
+Cada release incluye el **SHA-256** del ZIP (en las notas y en `SHA256SUMS.txt`). Para comprobarlo:
+
+```powershell
+Get-FileHash .\YTFE-1.0.0-win-x64.zip -Algorithm SHA256
+```
+
+Y, si tienes la [CLI de GitHub](https://cli.github.com/), puedes verificar que el ZIP salió realmente de este
+repositorio (atestación de procedencia, disponible en las releases generadas por la tarea automática):
+
+```powershell
+gh attestation verify .\YTFE-1.0.0-win-x64.zip --repo Damanium/YTFE
+```
+
 ### Si Windows bloquea la aplicación
-Una política de **Control de aplicaciones** (Smart App Control o WDAC) puede bloquear binarios sin firmar, y
-una compilación local lo es. Verás el error `Una directiva de Control de aplicaciones bloqueó este archivo`.
-Las salidas son: ajustar esa política (Smart App Control, al desactivarlo, **no se puede volver a activar sin
-reinstalar Windows**), pedir a TI que permita la carpeta, o **firmar los binarios** con un certificado de firma de código.
+
+**Las versiones publicadas todavía no están firmadas digitalmente.** Windows desconfía de los programas sin firma
+ni reputación, y puede reaccionar de tres formas distintas:
+
+| Qué ves | Qué es | Qué hacer |
+|---|---|---|
+| «Windows protegió su PC» | **SmartScreen** (reputación) | Pulsa **Más información → Ejecutar de todas formas** |
+| «Una directiva de Control de aplicaciones bloqueó este archivo» en tu PC personal | **Smart App Control** | Ver abajo: no hay botón para saltarlo |
+| El mismo mensaje en un PC de trabajo o de estudios | **WDAC / AppLocker** (política de la organización) | Pide a quien administre el equipo que permita la aplicación |
+
+**Smart App Control (SAC)** es una protección de Windows 11 que bloquea todo programa que no esté firmado por una
+entidad de confianza o no sea conocido. No admite excepciones por aplicación. Tus opciones son:
+
+- **Esperar a una versión firmada** (es el objetivo; ver [Firma de código](#firma-de-código-para-mantenedores)).
+- **Desactivar Smart App Control** en *Seguridad de Windows → Control de aplicaciones y del navegador →
+  Configuración de Smart App Control → Desactivado*. **Es irreversible: no se puede volver a activar sin
+  restablecer o reinstalar Windows**, y reduce la protección de todo el equipo. Hazlo solo si entiendes el riesgo y
+  confías en el origen del programa.
+- **Compilarlo tú mismo no lo evita**: un ejecutable compilado en local tampoco está firmado, así que SAC lo bloquea
+  igual. Por eso Microsoft recomienda tener SAC desactivado en los equipos de desarrollo.
+
+> **Aviso sobre las herramientas descargadas.** En el primer arranque YTFE descarga `yt-dlp.exe`, `ffmpeg.exe` y
+> `deno.exe`, que son programas de terceros y los firmantes no somos nosotros. Con Smart App Control activo podrían
+> bloquearse también. Esto **no se ha verificado** en un Windows con SAC activado.
+
+Sea cual sea el caso, descarga siempre desde la página oficial de [Releases](https://github.com/Damanium/YTFE/releases)
+y comprueba el SHA-256.
 
 ---
 
-## Puesta en marcha
+## Compilar desde el código
 
 ```powershell
 git clone https://github.com/Damanium/YTFE.git
@@ -198,11 +240,52 @@ src/YTFE/
 - **Añadir un formato o resolución:** ajustar las listas del constructor de `MainViewModel` y, si hace falta,
   `DownloadOptions.ToArgs()`.
 
-### Publicar (sin probar)
+### Publicar una versión
+
+**Automático (recomendado).** El flujo [`.github/workflows/release.yml`](.github/workflows/release.yml) compila en un
+Windows limpio, empaqueta el ZIP, calcula el SHA-256, genera la atestación de procedencia y crea la release:
+
 ```powershell
-dotnet publish src\YTFE -c Release -r win-x64 --self-contained
+git tag v1.1.0
+git push origin v1.1.0
 ```
-Genera una carpeta que no requiere tener .NET instalado. Aún no se ha probado el empaquetado ni se ha creado instalador.
+
+También se puede lanzar a mano desde la pestaña **Actions → Release → Run workflow**: compila y deja el ZIP como
+artefacto de esa ejecución, pero no crea ninguna release.
+
+> El flujo automático se ha validado sintácticamente, pero **aún no se ha ejecutado en GitHub**. La versión 1.0.0
+> se generó a mano con el comando de abajo.
+
+**A mano.** Es el mismo comando que usa el flujo. Genera un único `YTFE.exe` de unos 65 MB, con .NET incluido
+(el ZIP pesa ~57 MB):
+
+```powershell
+dotnet publish src\YTFE -c Release -r win-x64 --self-contained `
+  -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
+  -p:EnableCompressionInSingleFile=true -o publish\win-x64
+```
+
+La versión 1.0.0 se compiló así y se comprobó que el ejecutable arranca y responde. No hay instalador (MSI/MSIX):
+se distribuye como ZIP portátil.
+
+### Firma de código (para mantenedores)
+
+El flujo ya incluye los pasos de firma con [SignPath](https://signpath.org), que ofrece certificados **gratuitos para
+proyectos de código abierto** (SignPath Foundation). Están **desactivados** hasta que se complete esto:
+
+1. **Solicitar el certificado** a SignPath Foundation (el repositorio es público y la licencia, MIT). Cada proyecto
+   se revisa a mano; la aprobación no está garantizada. *Estado: pendiente de solicitar.*
+2. En SignPath, crear el proyecto, una política de firma de release y una configuración de artefacto que espere un
+   ZIP con `YTFE.exe` en la raíz, e instalar su conector de GitHub.
+3. En el repositorio (*Settings → Secrets and variables → Actions*):
+   - **Secreto** `SIGNPATH_API_TOKEN`
+   - **Variables** `SIGNPATH_ORGANIZATION_ID`, `SIGNPATH_PROJECT_SLUG`, `SIGNPATH_SIGNING_POLICY_SLUG`
+   - **Variable** `SIGNPATH_ENABLED` = `true` (el interruptor que activa la firma)
+4. Añadir a este README la **política de firma de código** que exige SignPath y la frase
+   *«Free code signing provided by SignPath.io, certificate by SignPath Foundation»*.
+
+Alternativas si SignPath no lo aprueba: Azure Trusted Signing o un certificado de firma de código de pago;
+en ambos casos solo cambian los pasos marcados como «Firma de código» del flujo.
 
 ---
 
@@ -237,14 +320,14 @@ de un instalador, pasarías a redistribuirlo** y deberás cumplir la GPL (o camb
 - No hay límite de velocidad ni programación de descargas.
 - Los errores de yt-dlp se traducen solo los más comunes (`ErrorHints.cs`); el resto aparece tal cual, en inglés.
 - Las cookies de Chrome/Edge/Brave pueden no leerse con el navegador abierto; si falla, se reintenta sin cookies.
-- Una compilación local sin firmar puede ser bloqueada por Windows (ver arriba).
+- Los ejecutables no están firmados, así que Windows puede bloquearlos (ver [Si Windows bloquea la aplicación](#si-windows-bloquea-la-aplicación)).
 - Si se reanuda una descarga restaurada antes de que termine la comprobación inicial de herramientas, podría fallar.
 - Al comprobar versiones de ffmpeg/deno se usa la API de GitHub sin autenticar (60 consultas/hora; suficiente).
 
 ## Ideas pendientes
 - Varias URL a la vez; límite de velocidad; programación.
 - Pruebas automatizadas (el parseo de progreso, `ToArgs()` y `DownloadStore` son fáciles de probar).
-- Icono, instalador y firma de código; actualización de la propia aplicación.
+- Instalador (MSIX o Inno Setup), firma de código (ver arriba) y actualización de la propia aplicación.
 - Notificación al completar una descarga.
 
 ## Nota sobre contribuir a yt-dlp
