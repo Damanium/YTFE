@@ -45,14 +45,14 @@ No hace falta instalar Python, yt-dlp, ffmpeg ni deno: la aplicación los descar
 Cada release incluye el **SHA-256** del ZIP (en las notas y en `SHA256SUMS.txt`). Para comprobarlo:
 
 ```powershell
-Get-FileHash .\YTFE-1.0.0-win-x64.zip -Algorithm SHA256
+Get-FileHash .\YTFE-1.1.0-win-x64.zip -Algorithm SHA256
 ```
 
 Y, si tienes la [CLI de GitHub](https://cli.github.com/), puedes verificar que el ZIP salió realmente de este
 repositorio (atestación de procedencia, disponible en las releases generadas por la tarea automática):
 
 ```powershell
-gh attestation verify .\YTFE-1.0.0-win-x64.zip --repo Damanium/YTFE
+gh attestation verify .\YTFE-1.1.0-win-x64.zip --repo Damanium/YTFE
 ```
 
 ### Si Windows bloquea la aplicación
@@ -294,6 +294,16 @@ en ambos casos solo cambian los pasos marcados como «Firma de código» del flu
 
 YTFE se distribuye bajo la **licencia MIT** (ver [LICENSE](LICENSE)): puedes usarlo, copiarlo, modificarlo y
 redistribuirlo, también con fines comerciales, conservando el aviso de copyright. Se ofrece "tal cual", sin garantía.
+
+## Créditos
+
+YTFE es solo una interfaz; el trabajo lo hacen proyectos de otras personas (también visibles en la app: **Ayuda → Acerca de y créditos**):
+
+- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)**: creado por [pukkandan](https://github.com/pukkandan) y mantenido por los colaboradores de yt-dlp, a partir de [youtube-dl](https://github.com/ytdl-org/youtube-dl) (Ricardo Garcia y su comunidad).
+- **[FFmpeg](https://github.com/FFmpeg/FFmpeg)** ([ffmpeg.org](https://ffmpeg.org)): los desarrolladores de FFmpeg (fundado por Fabrice Bellard); compilaciones de [yt-dlp/FFmpeg-Builds](https://github.com/yt-dlp/FFmpeg-Builds).
+- **[Deno](https://github.com/denoland/deno)**: [Ryan Dahl](https://github.com/ry) y los colaboradores de Deno.
+- **[Simple Icons](https://github.com/simple-icons/simple-icons)**: logos de los sitios.
+- **.NET / WPF** ([dotnet/runtime](https://github.com/dotnet/runtime), [dotnet/wpf](https://github.com/dotnet/wpf)): Microsoft y la comunidad de .NET.
 
 ## Licencias y componentes de terceros
 

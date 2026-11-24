@@ -679,5 +679,50 @@ public static class HelpContent
             ## How do I uninstall the app?
             Delete the app's folder and, to clean up completely, `%LOCALAPPDATA%\YTFE\`. Your downloaded videos are not touched.
             """),
+
+        new("about",
+            "Acerca de y créditos", "About and credits",
+            """
+            **YTFE** · versión 1.1.0
+            Creado por **Damanium** · Copyright © 2026 · Licencia MIT.
+            Código abierto: [github.com/Damanium/YTFE](https://github.com/Damanium/YTFE)
+
+            YTFE es solo una interfaz gráfica. Todo el trabajo pesado lo hacen proyectos de terceros, creados por otras personas, que merecen todo el crédito:
+
+            ## Herramientas que usa
+            - [yt-dlp](https://github.com/yt-dlp/yt-dlp): el motor que encuentra y descarga los vídeos. Creado por [pukkandan](https://github.com/pukkandan) y mantenido por **los colaboradores de yt-dlp**, a partir de [youtube-dl](https://github.com/ytdl-org/youtube-dl) (de **Ricardo Garcia** y su comunidad). Licencia Unlicense.
+            - [FFmpeg](https://github.com/FFmpeg/FFmpeg): une imagen y sonido y convierte formatos. Es obra de **los desarrolladores de FFmpeg** (proyecto fundado por **Fabrice Bellard**). Se descarga la compilación de [yt-dlp/FFmpeg-Builds](https://github.com/yt-dlp/FFmpeg-Builds). Licencia GPL.
+            - [Deno](https://github.com/denoland/deno): entorno de ejecución que yt-dlp necesita para YouTube. Creado por [Ryan Dahl](https://github.com/ry) y **los colaboradores de Deno** (Deno Land). Licencia MIT.
+
+            ## Tecnología y recursos
+            - **.NET** ([dotnet/runtime](https://github.com/dotnet/runtime)) y **WPF** ([dotnet/wpf](https://github.com/dotnet/wpf)), de **Microsoft** y la comunidad de .NET. Licencia MIT.
+            - [Simple Icons](https://github.com/simple-icons/simple-icons): los logos de los sitios, de **los colaboradores de Simple Icons**. Licencia CC0.
+
+            > Los nombres y logos de YouTube, Vimeo, TikTok y demás sitios son marcas de sus respectivos propietarios y se usan solo para identificar el sitio. YTFE no está afiliado ni respaldado por ellos, ni por los autores de las herramientas anteriores.
+
+            ## Gracias
+            A todas las personas que desarrollan y mantienen estos proyectos libres, sin los cuales esta aplicación no existiría.
+            """,
+            """
+            **YTFE** · version 1.1.0
+            Created by **Damanium** · Copyright © 2026 · MIT licence.
+            Open source: [github.com/Damanium/YTFE](https://github.com/Damanium/YTFE)
+
+            YTFE is just a graphical interface. All the heavy lifting is done by third-party projects, made by other people, who deserve full credit:
+
+            ## Tools it uses
+            - [yt-dlp](https://github.com/yt-dlp/yt-dlp): the engine that finds and downloads the videos. Created by [pukkandan](https://github.com/pukkandan) and maintained by **the yt-dlp contributors**, based on [youtube-dl](https://github.com/ytdl-org/youtube-dl) (by **Ricardo Garcia** and its community). Unlicense.
+            - [FFmpeg](https://github.com/FFmpeg/FFmpeg): merges picture and sound and converts formats. The work of **the FFmpeg developers** (project founded by **Fabrice Bellard**). The build from [yt-dlp/FFmpeg-Builds](https://github.com/yt-dlp/FFmpeg-Builds) is downloaded. GPL licence.
+            - [Deno](https://github.com/denoland/deno): the runtime yt-dlp needs for YouTube. Created by [Ryan Dahl](https://github.com/ry) and **the Deno contributors** (Deno Land). MIT licence.
+
+            ## Technology and resources
+            - **.NET** ([dotnet/runtime](https://github.com/dotnet/runtime)) and **WPF** ([dotnet/wpf](https://github.com/dotnet/wpf)), by **Microsoft** and the .NET community. MIT licence.
+            - [Simple Icons](https://github.com/simple-icons/simple-icons): the site logos, by **the Simple Icons contributors**. CC0 licence.
+
+            > The names and logos of YouTube, Vimeo, TikTok and other sites are trademarks of their respective owners and are used only to identify the site. YTFE is not affiliated with or endorsed by them, nor by the authors of the tools above.
+
+            ## Thanks
+            To everyone who develops and maintains these free projects, without which this app would not exist.
+            """),
     ];
 }

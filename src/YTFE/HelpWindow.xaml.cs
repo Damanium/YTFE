@@ -13,7 +13,8 @@ public partial class HelpWindow : Window
 {
     private sealed record Entry(string Id, string Title);
 
-    private static readonly Regex InlineRx = new(@"(\*\*.+?\*\*|`.+?`)", RegexOptions.Compiled);
+    private static readonly Regex InlineRx = new(@"(\[[^\]]+\]\(https?://[^)\s]+\)|\*\*.+?\*\*|`.+?`)", RegexOptions.Compiled);
+    private static readonly Regex LinkRx = new(@"^\[([^\]]+)\]\((https?://[^)\s]+)\)$", RegexOptions.Compiled);
     private static readonly Regex NumberedRx = new(@"^(\d+)\.\s+(.*)$", RegexOptions.Compiled);
 
     private string? _currentId;
@@ -150,7 +151,18 @@ public partial class HelpWindow : Window
         foreach (var part in InlineRx.Split(text))
         {
             if (part.Length == 0) continue;
-            if (part.StartsWith("**") && part.EndsWith("**") && part.Length > 4)
+            if (LinkRx.Match(part) is { Success: true } lm)
+            {
+                var link = new Hyperlink(new Run(lm.Groups[1].Value)) { FontWeight = FontWeights.SemiBold, ToolTip = lm.Groups[2].Value };
+                var url = lm.Groups[2].Value;
+                link.Click += (_, _) =>
+                {
+                    try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); }
+                    catch { /* sin navegador: no hay nada que hacer */ }
+                };
+                block.Inlines.Add(link);
+            }
+            else if (part.StartsWith("**") && part.EndsWith("**") && part.Length > 4)
                 block.Inlines.Add(new Run(part[2..^2]) { FontWeight = FontWeights.SemiBold });
             else if (part.StartsWith('`') && part.EndsWith('`') && part.Length > 2)
             {

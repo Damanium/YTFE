@@ -9,7 +9,7 @@
     <RootNamespace>YTFE</RootNamespace>
     <AssemblyName>YTFE</AssemblyName>
     <NoWarn>$(NoWarn);WPF0001</NoWarn>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Product>YTFE</Product>
     <Description>Descargador de vídeo y audio basado en yt-dlp y ffmpeg</Description>
     <Copyright>Copyright (c) 2026 Damanium</Copyright>
