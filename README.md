@@ -57,7 +57,7 @@ gh attestation verify .\YTFE-1.0.0-win-x64.zip --repo Damanium/YTFE
 
 ### Si Windows bloquea la aplicación
 
-**Las versiones publicadas todavía no están firmadas digitalmente.** Windows desconfía de los programas sin firma
+**Las versiones publicadas no están firmadas digitalmente** (de momento no se prevé firmarlas). Windows desconfía de los programas sin firma
 ni reputación, y puede reaccionar de tres formas distintas:
 
 | Qué ves | Qué es | Qué hacer |
@@ -69,11 +69,12 @@ ni reputación, y puede reaccionar de tres formas distintas:
 **Smart App Control (SAC)** es una protección de Windows 11 que bloquea todo programa que no esté firmado por una
 entidad de confianza o no sea conocido. No admite excepciones por aplicación. Tus opciones son:
 
-- **Esperar a una versión firmada** (es el objetivo; ver [Firma de código](#firma-de-código-para-mantenedores)).
 - **Desactivar Smart App Control** en *Seguridad de Windows → Control de aplicaciones y del navegador →
-  Configuración de Smart App Control → Desactivado*. **Es irreversible: no se puede volver a activar sin
-  restablecer o reinstalar Windows**, y reduce la protección de todo el equipo. Hazlo solo si entiendes el riesgo y
-  confías en el origen del programa.
+  Configuración de Smart App Control → Desactivado*. Mientras esté desactivado, el equipo queda **menos protegido**
+  frente a programas desconocidos: hazlo solo si entiendes el riesgo y confías en el origen del programa. En las
+  versiones recientes de Windows 11 (con las actualizaciones de 2026) puedes **volver a activarlo** desde el mismo
+  sitio cuando quieras; en versiones antiguas, una vez desactivado no se podía reactivar sin restablecer o reinstalar
+  Windows, así que comprueba antes que tu Windows está actualizado y que la opción te deja elegir *Activado*.
 - **Compilarlo tú mismo no lo evita**: un ejecutable compilado en local tampoco está firmado, así que SAC lo bloquea
   igual. Por eso Microsoft recomienda tener SAC desactivado en los equipos de desarrollo.
 
@@ -274,7 +275,7 @@ El flujo ya incluye los pasos de firma con [SignPath](https://signpath.org), que
 proyectos de código abierto** (SignPath Foundation). Están **desactivados** hasta que se complete esto:
 
 1. **Solicitar el certificado** a SignPath Foundation (el repositorio es público y la licencia, MIT). Cada proyecto
-   se revisa a mano; la aprobación no está garantizada. *Estado: pendiente de solicitar.*
+   se revisa a mano; la aprobación no está garantizada. *Estado: no solicitada; de momento no se prevé firmar.*
 2. En SignPath, crear el proyecto, una política de firma de release y una configuración de artefacto que espere un
    ZIP con `YTFE.exe` en la raíz, e instalar su conector de GitHub.
 3. En el repositorio (*Settings → Secrets and variables → Actions*):
