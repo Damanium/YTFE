@@ -1,0 +1,17 @@
+# Salida de compilación
+bin/
+obj/
+publish/
+
+# Editor / IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store
+
+# Claude Code (configuración local)
+.claude/
