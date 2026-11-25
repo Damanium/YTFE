@@ -254,8 +254,8 @@ git push origin v1.1.1
 También se puede lanzar a mano desde la pestaña **Actions → Release → Run workflow**: compila y deja el ZIP como
 artefacto de esa ejecución, pero no crea ninguna release.
 
-> El flujo automático se ha validado sintácticamente, pero **aún no se ha ejecutado en GitHub**. La versión 1.0.0
-> se generó a mano con el comando de abajo.
+> El flujo automático ya se ha ejecutado en GitHub con éxito (releases 1.1.0 y 1.1.1). La versión 1.0.0 se generó
+> a mano con el comando de abajo.
 
 **A mano.** Es el mismo comando que usa el flujo. Genera un único `YTFE.exe` de unos 65 MB, con .NET incluido
 (el ZIP pesa ~57 MB):
