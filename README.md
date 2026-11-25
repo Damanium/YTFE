@@ -45,14 +45,14 @@ No hace falta instalar Python, yt-dlp, ffmpeg ni deno: la aplicación los descar
 Cada release incluye el **SHA-256** del ZIP (en las notas y en `SHA256SUMS.txt`). Para comprobarlo:
 
 ```powershell
-Get-FileHash .\YTFE-1.1.0-win-x64.zip -Algorithm SHA256
+Get-FileHash .\YTFE-1.1.1-win-x64.zip -Algorithm SHA256
 ```
 
 Y, si tienes la [CLI de GitHub](https://cli.github.com/), puedes verificar que el ZIP salió realmente de este
 repositorio (atestación de procedencia, disponible en las releases generadas por la tarea automática):
 
 ```powershell
-gh attestation verify .\YTFE-1.1.0-win-x64.zip --repo Damanium/YTFE
+gh attestation verify .\YTFE-1.1.1-win-x64.zip --repo Damanium/YTFE
 ```
 
 ### Si Windows bloquea la aplicación
@@ -247,8 +247,8 @@ src/YTFE/
 Windows limpio, empaqueta el ZIP, calcula el SHA-256, genera la atestación de procedencia y crea la release:
 
 ```powershell
-git tag v1.1.0
-git push origin v1.1.0
+git tag v1.1.1
+git push origin v1.1.1
 ```
 
 También se puede lanzar a mano desde la pestaña **Actions → Release → Run workflow**: compila y deja el ZIP como
@@ -304,6 +304,10 @@ YTFE es solo una interfaz; el trabajo lo hacen proyectos de otras personas (tamb
 - **[Deno](https://github.com/denoland/deno)**: [Ryan Dahl](https://github.com/ry) y los colaboradores de Deno.
 - **[Simple Icons](https://github.com/simple-icons/simple-icons)**: logos de los sitios.
 - **.NET / WPF** ([dotnet/runtime](https://github.com/dotnet/runtime), [dotnet/wpf](https://github.com/dotnet/wpf)): Microsoft y la comunidad de .NET.
+
+## Apoyar el proyecto
+
+YTFE es gratuito y lo seguirá siendo. Si te resulta útil y quieres echar una mano, puedes hacer una donación voluntaria por [PayPal](https://paypal.me/damanium). No es necesario y no da ninguna ventaja.
 
 ## Licencias y componentes de terceros
 

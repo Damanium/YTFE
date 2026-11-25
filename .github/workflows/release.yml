@@ -3,8 +3,8 @@ name: Release
 # Compila YTFE en un Windows limpio y publica una release con el ZIP descargable.
 #
 # Cómo publicar una versión:
-#     git tag v1.1.0
-#     git push origin v1.1.0
+#     git tag v1.1.1
+#     git push origin v1.1.1
 #
 # También se puede lanzar a mano desde la pestaña Actions ("Run workflow"): compila y deja el ZIP
 # como artefacto de la ejecución, pero NO crea ninguna release.

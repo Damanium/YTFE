@@ -683,9 +683,10 @@ public static class HelpContent
         new("about",
             "Acerca de y créditos", "About and credits",
             """
-            **YTFE** · versión 1.1.0
+            **YTFE** · versión 1.1.1
             Creado por **Damanium** · Copyright © 2026 · Licencia MIT.
             Código abierto: [github.com/Damanium/YTFE](https://github.com/Damanium/YTFE)
+            ¿Te resulta útil? Puedes apoyar el proyecto, sin ninguna obligación: [paypal.me/damanium](https://paypal.me/damanium)
 
             YTFE es solo una interfaz gráfica. Todo el trabajo pesado lo hacen proyectos de terceros, creados por otras personas, que merecen todo el crédito:
 
@@ -704,9 +705,10 @@ public static class HelpContent
             A todas las personas que desarrollan y mantienen estos proyectos libres, sin los cuales esta aplicación no existiría.
             """,
             """
-            **YTFE** · version 1.1.0
+            **YTFE** · version 1.1.1
             Created by **Damanium** · Copyright © 2026 · MIT licence.
             Open source: [github.com/Damanium/YTFE](https://github.com/Damanium/YTFE)
+            Find it useful? You can support the project, no strings attached: [paypal.me/damanium](https://paypal.me/damanium)
 
             YTFE is just a graphical interface. All the heavy lifting is done by third-party projects, made by other people, who deserve full credit:
 
